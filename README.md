@@ -8,7 +8,7 @@
 
 ![SAM design](assets/model_diagram.png?raw=true)
 
-The **Segment Anything Model (SAM)** produces high quality object masks from input prompts such as points or boxes, and it can be used to generate masks for all objects in an image. It has been trained on a [dataset](https://segment-anything.com/dataset/index.html) of 11 million images and 1.1 billion masks, and has strong zero-shot performance on a variety of segmentation tasks.
+**分割模型(SAM)**从点或box等输入提示中产生高质量的目标mask，它可以用来为图像中的所有目标产生mask。它已经在一个由1100万张图像和11亿个masking组成的[数据集](https://segment-anything.com/dataset/index.html)上进行了训练，并在各种分割任务上具有强大的zero-shot性能。
 
 <p float="left">
   <img src="assets/masks1.png?raw=true" width="37.25%" />
@@ -17,10 +17,10 @@ The **Segment Anything Model (SAM)** produces high quality object masks from inp
 
 ## Installation
 
-The code requires `python>=3.8`, as well as `pytorch>=1.7` and `torchvision>=0.8`. Please follow the instructions [here](https://pytorch.org/get-started/locally/) to install both PyTorch and TorchVision dependencies. Installing both PyTorch and TorchVision with CUDA support is strongly recommended.
-
-Install Segment Anything:
-
+该代码需要`python>=3.8`，以及`pytorch>=1.7`和`torchvision>=0.8`。
+请按照[这里](https://pytorch.org/get-started/locally/)的说明来安装PyTorch和TorchVision的依赖。
+强烈建议同时安装支持CUDA的PyTorch和TorchVision。 
+安装Segment Anything：
 ```
 pip install git+https://github.com/facebookresearch/segment-anything.git
 ```
@@ -31,8 +31,7 @@ or clone the repository locally and install with
 git clone git@github.com:facebookresearch/segment-anything.git
 cd segment-anything; pip install -e .
 ```
-
-The following optional dependencies are necessary for mask post-processing, saving masks in COCO format, the example notebooks, and exporting the model in ONNX format. `jupyter` is also required to run the example notebooks.
+以下是mask后处理、以COCO格式保存mask、样本笔记本和以ONNX格式导出模型所需的可选依赖项。`jupyter`也是运行样本笔记本所必需的。
 ```
 pip install opencv-python pycocotools matplotlib onnxruntime onnx
 ```
@@ -40,7 +39,7 @@ pip install opencv-python pycocotools matplotlib onnxruntime onnx
 
 ## <a name="GettingStarted"></a>Getting Started
 
-First download a [model checkpoint](#model-checkpoints). Then the model can be used in just a few lines to get masks from a given prompt:
+首先下载一个[模型checkpoint](#model-checkpoints)。然后，只需几行就可以使用该模型，从给定的提示中获得mask：
 
 ```
 from segment_anything import SamPredictor, sam_model_registry
@@ -50,7 +49,7 @@ predictor.set_image(<your_image>)
 masks, _, _ = predictor.predict(<input_prompts>)
 ```
 
-or generate masks for an entire image:
+或为整个图像生成mask：
 
 ```
 from segment_anything import SamAutomaticMaskGenerator, sam_model_registry
@@ -58,8 +57,7 @@ sam = sam_model_registry["<model_type>"](checkpoint="<path/to/checkpoint>")
 mask_generator = SamAutomaticMaskGenerator(sam)
 masks = mask_generator.generate(<your_image>)
 ```
-
-Additionally, masks can be generated for images from the command line:
+此外，还可以从命令行中为图像生成mask：
 
 ```
 python scripts/amg.py --checkpoint <path/to/checkpoint> --model-type <model_type> --input <image_or_folder> --output <path/to/output>
@@ -73,33 +71,33 @@ See the examples notebooks on [using SAM with prompts](/notebooks/predictor_exam
 </p>
 
 ## ONNX Export
-
-SAM's lightweight mask decoder can be exported to ONNX format so that it can be run in any environment that supports ONNX runtime, such as in-browser as showcased in the [demo](https://segment-anything.com/demo). Export the model with
+SAM的轻量级mask解码器可以导出为ONNX格式，这样它就可以在任何支持ONNX运行的环境中运行，
+例如在浏览器中运行，如[演示](https://segment-anything.com/demo)中展示的那样。用以下方法导出模型
 
 ```
 python scripts/export_onnx_model.py --checkpoint <path/to/checkpoint> --model-type <model_type> --output <path/to/output>
 ```
-
-See the [example notebook](https://github.com/facebookresearch/segment-anything/blob/main/notebooks/onnx_model_example.ipynb) for details on how to combine image preprocessing via SAM's backbone with mask prediction using the ONNX model. It is recommended to use the latest stable version of PyTorch for ONNX export.
+关于如何通过SAM的主干将图像预处理与使用ONNX模型进行masking预测结合起来，详见[样本笔记本]（https://github.com/facebookresearch/segment-anything/blob/main/notebooks/onnx_model_example.ipynb）。
+建议使用PyTorch的最新稳定版本进行ONNX输出。
 
 ## <a name="Models"></a>Model Checkpoints
-
-Three model versions of the model are available with different backbone sizes. These models can be instantiated by running 
+该模型有三个模型版本，有不同的主干尺寸。这些模型可以通过运行以下命令实例化
 ```
 from segment_anything import sam_model_registry
 sam = sam_model_registry["<model_type>"](checkpoint="<path/to/checkpoint>")
 ```
-Click the links below to download the checkpoint for the corresponding model type.
+点击下面的链接，下载相应型号的checkpoint。下载后，将其放在任何位置，然后将其路径传递给`checkpoint`参数。
 
 * **`default` or `vit_h`: [ViT-H SAM model.](https://dl.fbaipublicfiles.com/segment_anything/sam_vit_h_4b8939.pth)**
 * `vit_l`: [ViT-L SAM model.](https://dl.fbaipublicfiles.com/segment_anything/sam_vit_l_0b3195.pth)
 * `vit_b`: [ViT-B SAM model.](https://dl.fbaipublicfiles.com/segment_anything/sam_vit_b_01ec64.pth)
 
 ## Dataset
-See [here](https://ai.facebook.com/datasets/segment-anything/) for an overview of the datastet. The dataset can be downloaded [here](https://ai.facebook.com/datasets/segment-anything-downloads/). By downloading the datasets you agree that you have read and accepted the terms of the SA-1B Dataset Research License.
+参见[这里](https://ai.facebook.com/datasets/segment-anything/)，了解数据集的概况。
+该数据集可以下载[这里](https://ai.facebook.com/datasets/segment-anything-downloads/)。
+通过下载数据集，你同意你已经阅读并接受SA-1B数据集研究许可证的条款。
 
-We save masks per image as a json file. It can be loaded as a dictionary in python in the below format.
-
+我们将每张图片的masking保存为一个json文件。它可以作为一个字典在Python中加载，格式如下。
 
 ```python
 {
@@ -125,10 +123,8 @@ annotation {
     "point_coords"          : [[x, y]],         # The point coordinates input to the model to generate the mask
 }
 ```
-
-Image ids can be found in sa_images_ids.txt which can be downloaded using the above [link](https://ai.facebook.com/datasets/segment-anything-downloads/) as well.
-
-To decode a mask in COCO RLE format into binary:
+图片ids可以在sa_images_ids.txt中找到，也可以用上述[链接](https://ai.facebook.com/datasets/segment-anything-downloads/)下载。
+将COCO RLE格式的mask解码为二进制：
 ```
 from pycocotools import mask as mask_utils
 mask = mask_utils.decode(annotation["segmentation"])
